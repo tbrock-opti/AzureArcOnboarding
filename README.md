@@ -21,4 +21,5 @@ git clone https://github.com/tbrock-opti/AzureArcOnboarding.git
 ```
 3. Execute the script
 ```console
+.\AzureArcOnboarding\Start-AzureArcOnboarding.ps1 -secrets $secrets
 ```
