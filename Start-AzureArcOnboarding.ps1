@@ -10,6 +10,12 @@ param (
 # enable verbose messages    
 $VerbosePreference = Continue
 
+# ensure $secrets has been provided or exit
+if (!$secrets) {
+    Write-Verbose 'Secrets object is not preset. RTFM and try again. https://github.com/tbrock-opti/AzureArcOnboarding/blob/main/README.md'
+    Exit
+}
+
 # download arc agent install file
 Write-Verbose 'Downloading Arc installer...'
 $agentInstallfile = $($env:temp + '\AzureConnectedMachineAgent.msi')
