@@ -6,7 +6,7 @@
 ```console
 $secrets = @{
     correlationId            = ''
-    location = ''
+    location                 = ''
     resourceGroup            = ''
     servicePrincipalSecret   = ''
     servicePrincipalClientId = ''
