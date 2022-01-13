@@ -1,30 +1,17 @@
+#Requires -RunAsAdministrator
 
-function Test-IsAzure() {
-    [CmdletBinding()]
-    param (
-    )
+[CmdletBinding()]
+param (
+    # object containing secrets from LastPass
+    # Find "Arc Server Onboarding Secrets" in LastPass and paste it at the
+    # command prompt. Then run this cript via:
+    # $secrets | Start-AzureArcOnboarding.ps1
+    [Parameter(Mandatory,ValueFromPipelineByPropertyName)]
+    [PSCustomObject]
+    $secrets
+)
 
-    Write-Verbose "Checking if this is an Azure virtual machine"
-    try {
-        $iwrParams = @{
-            Uri         = 'http://169.254.169.254/metadata/instance/compute?api-version=2019-06-01'
-            Headers     = @{Metadata = "true" }
-            TimeoutSec  = 1
-            ErrorAction = 'SilentlyContinue'
-        }
-        $response = Invoke-WebRequest  @iwrParams
-    }
-    catch {
-        Write-Verbose "Error $_ checking if we are in Azure"
-        return $false
-    }
-    if ($null -ne $response -and $response.StatusCode -eq 200) {
-        Write-Verbose "Azure check indicates that we are in Azure"
-        return $true
-    }
-    return $false
-}
-
+# download arc agent install file
 Invoke-WebRequest -Uri https://aka.ms/AzureConnectedMachineAgent -OutFile AzureConnectedMachineAgent.msi	
       
 # Install the package
@@ -67,7 +54,7 @@ if ($LastExitCode -eq 0) {
 
 # download agent setup file
 $setupFile = $($env:temp + '\MMASetup-AMD64.exe')
-Invoke-WebRequest https://go.microsoft.com/fwlink/?LinkId=828603 -OutFile $setupFile
+Invoke-WebRequest 'https://go.microsoft.com/fwlink/?LinkId=828603' -OutFile $setupFile
 
 # Pepare agent install parameters
 $setupParams = '/qn NOAPM=1 ADD_OPINSIGHTS_WORKSPACE=1 OPINSIGHTS_WORKSPACE_AZURE_CLOUD_TYPE=0 ' + `
