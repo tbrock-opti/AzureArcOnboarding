@@ -15,8 +15,10 @@ $secrets = @{
     workspaceKey             = ''
 }
 ```
-2. ```console
+2. Clone the onboarding script:
+```console
 git clone https://github.com/tbrock-opti/AzureArcOnboarding.git
 ```
-3. ```console
+3. Execute the script
+```console
 ```
