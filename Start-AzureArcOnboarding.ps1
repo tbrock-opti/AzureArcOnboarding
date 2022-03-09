@@ -1,3 +1,4 @@
+ 
 # fail script if not running as administrator
 #Requires -RunAsAdministrator
 
@@ -7,22 +8,13 @@ param (
     $secrets
 )
 
-# enable verbose messages    
-$VerbosePreference = Continue
-
-# ensure $secrets has been provided or exit
-if (!$secrets) {
-    Write-Verbose 'Secrets object is not preset. RTFM and try again. https://github.com/tbrock-opti/AzureArcOnboarding/blob/main/README.md'
-    Exit
-}
-
 # download arc agent install file
-Write-Verbose 'Downloading Arc installer...'
+Write-Verbose 'Downloading Arc installer...' -Verbose
 $agentInstallfile = $($env:temp + '\AzureConnectedMachineAgent.msi')
 Invoke-WebRequest -Uri https://aka.ms/AzureConnectedMachineAgent -OutFile $agentInstallfile -UseBasicParsing
       
 # Install the package
-Write-Verbose -Message "Installing agent package"
+Write-Verbose -Message "Installing agent package" -Verbose
 $spParams = @{
     FilePath     = 'c:\windows\system32\msiexec.exe'
     ArgumentList = @("/i", "$agentInstallFile" , "/l*v", "installationlog.txt", "/qn")
@@ -32,7 +24,7 @@ $spParams = @{
 Start-Process @spParams
 
 # parameters to connect agent to tenant
-Write-Verbose 'Connecting Arc agent to tenant...'
+Write-Verbose 'Connecting Arc agent to tenant...' -Verbose
 $spParams = @{
     FilePath     = "$env:ProgramW6432\AzureConnectedMachineAgent\azcmagent.exe"
     ArgumentList = @(
@@ -64,12 +56,12 @@ if ($LastExitCode -eq 0) {
 ###################################
 
 # download agent setup file
-Write-Verbose 'Download Log & Analytics agent setup file...'
+Write-Verbose 'Download Log & Analytics agent setup file...' -Verbose
 $setupFile = $($env:temp + '\MMASetup-AMD64.exe')
 Invoke-WebRequest 'https://go.microsoft.com/fwlink/?LinkId=828603' -OutFile $setupFile -UseBasicParsing
 
 # create directory to extract setup files
-Write-Verbose 'Creating temporary directory...'
+Write-Verbose 'Creating temporary directory...' -Verbose
 $ticks = (Get-Date).ticks
 $dirName = "$env:temp\MMASetup$ticks"
 New-Item -ItemType Directory -Path $dirName
@@ -94,7 +86,7 @@ $id = $secrets.workspaceId
 $key = $secrets.workspaceKey
 
 # parameters to connect agent to Arc
-Write-Verbose 'Running Log & Analytics agent installer...'
+Write-Verbose 'Running Log & Analytics agent installer...' -Verbose
 $spParams = @{
     FilePath     = $($dirName + '\setup.exe')
     ArgumentList = @(
@@ -113,7 +105,7 @@ $spParams = @{
 Start-Process @spParams
 
 # delete setup files and temp folders
-Write-Verbose 'Cleaning up setup & temporary files...'
+Write-Verbose 'Cleaning up setup & temporary files...' -Verbose
 @(
     $agentInstallfile,
     $setupFile,
